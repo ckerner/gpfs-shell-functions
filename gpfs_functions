@@ -1,0 +1,48 @@
+
+#===============================================================================#
+# Function: is_fs_mounted                                                       #
+#    Usage: Given a mount point, check to see if the file system is mounted.    #
+#           This function requires the file /MOUNT_POINT/.IS_MOUNTED to be in   #
+#           the root directory of the file system.                              #
+#-------------------------------------------------------------------------------#
+# Parameter: Mount point to check                                               #
+# Returns: 0 - If the file system is mounted.                                   #
+#          1 - If the file system is not mounted.                               #
+#===============================================================================#
+function is_fs_mounted {
+   TGTPATH=$1
+   if [ -f "${TGTPATH}/.IS_MOUNTED" ] ; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+function is_node_gpfs_manager {
+   HOSTNAME=`hostname -s`
+   MANAGER=`/usr/lpp/mmfs/bin/mmlsmgr -c 2>/dev/null| awk '{print($5)}' | sed -e 's/(//g' -e 's/)//g'`
+
+   RESULT=`echo ${MANAGER} | grep ${HOSTNAME} | wc -l`
+   if [ ${RESULT} -ge 1 ] ; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+function get_manager_name {
+   MANAGER=`/usr/lpp/mmfs/bin/mmlsmgr -c 2>/dev/null| awk '{print($5)}' | sed -e 's/(//g' -e 's/)//g'`
+   echo ${MANAGER}
+}
+
+function are_quotas_enabled {
+   GPFSDEV=$1
+   RESULT=`/usr/lpp/mmfs/bin/mmlsfs ${GPFSDEV} -Q -Y | grep quotasAccountingEnabled | wc -l`
+   if [ ${RESULT} -ge 1 ] ; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+
