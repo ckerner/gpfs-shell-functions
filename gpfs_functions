@@ -1,3 +1,13 @@
+#===============================================================================#
+# This file contains various shell functions that we use on many of the GPFS    #
+# clusters here at NCSA on the UIUC campus.                                     #
+#-------------------------------------------------------------------------------#
+# Chad Kerner - ckerner@illinois.edu - chad.kerner@gmail.com                    #
+# Senior Storage Engineer, Storage Enabling Technologies                        #
+# National Center for Supercomputing Applications                               #
+# University of Illinois, Urbana-Champaign                                      #
+#===============================================================================#
+
 
 #===============================================================================#
 # Function: is_fs_mounted                                                       #
@@ -18,6 +28,15 @@ function is_fs_mounted {
    fi
 }
 
+
+#===============================================================================#
+# Function: is_node_gpfs_manager                                                #
+#    Usage: Check the current host to see if it is the GPFS manager node.  .    #
+#-------------------------------------------------------------------------------#
+# Parameter: None                                                               #
+# Returns: 0 - If the current host is the GPFS manager node.                    #
+#          1 - If the current host is not the GPFS manager node.                #
+#===============================================================================#
 function is_node_gpfs_manager {
    HOSTNAME=`hostname -s`
    MANAGER=`/usr/lpp/mmfs/bin/mmlsmgr -c 2>/dev/null| awk '{print($5)}' | sed -e 's/(//g' -e 's/)//g'`
@@ -30,11 +49,29 @@ function is_node_gpfs_manager {
    fi
 }
 
+
+#===============================================================================#
+# Function: get_manager_name                                                    #
+#    Usage: Return the name of the GPFS cluster manager node.                   #
+#-------------------------------------------------------------------------------#
+# Parameter: None                                                               #
+# Returns: A string containing the name of the cluster manager node.            #
+#===============================================================================#
 function get_manager_name {
    MANAGER=`/usr/lpp/mmfs/bin/mmlsmgr -c 2>/dev/null| awk '{print($5)}' | sed -e 's/(//g' -e 's/)//g'`
    echo ${MANAGER}
 }
 
+
+#===============================================================================#
+# Function: are_quotas_enabled                                                  #
+#    Usage: Given a GPFS device, check to see if quotas are enabled for that    #
+#           device.                                                             #
+#-------------------------------------------------------------------------------#
+# Parameter: GPFS Device To Check                                               #
+# Returns: 0 - If the file system has quotas enabled.                           #
+#          1 - If the file system does not have quotas enabled.                 #
+#===============================================================================#
 function are_quotas_enabled {
    GPFSDEV=$1
    RESULT=`/usr/lpp/mmfs/bin/mmlsfs ${GPFSDEV} -Q -Y | grep quotasAccountingEnabled | wc -l`
