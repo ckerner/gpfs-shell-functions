@@ -83,3 +83,32 @@ function are_quotas_enabled {
 }
 
 
+function is_lock_set {
+   LOCKFILE=$1
+   if [ -f /var/run/${LOCKFILE} ] ; then
+      return 0
+   else
+      return 1
+   fi
+}
+
+
+function set_lock {
+   LOCKFILE=$1
+   if [ ! -f /var/run/${LOCKFILE} ] ; then
+      touch /var/run/${LOCKFILE}
+   fi
+}
+
+function remove_lock {
+   LOCKFILE=$1
+   if [ -f /var/run/${LOCKFILE} ] ; then
+      rm -f /var/run/${LOCKFILE} &>/dev/null
+   fi
+}
+
+function gen_lock_name {
+   MYSTR="$*"
+   echo ${MYCMD} | md5sum | awk '{print($1)}'
+}
+
