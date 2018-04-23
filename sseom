@@ -17,9 +17,13 @@ if [ "x$1" == "x" ] ; then
    cat <<EOHELP
 
    Usage: ${PROG} [-v] COMMAND_STRING
+          ${PROG} --maint
+          ${PROG} --eomaint
 
    Options
-   -v   Execute in verbose mode.
+   -v          Execute in verbose mode.
+   --maint     Enter maintenance mode
+   --eomaint   Leave maintenance mode
 
 EOHELP
    exit 1
@@ -38,6 +42,21 @@ if [[ -e /var/mmfs/etc/gpfs_functions ]] ; then
    source /var/mmfs/etc/gpfs_functions
 else
    echo "/var/mmfs/etc/gpfs_functions not installed."
+   exit 1
+fi
+
+if [ "${MYCMD}" == "--maint" ] ; then
+   set_lock gpfs_maintenance
+   echo "GPFS Maintenance Lock Installed: /var/run/gpfs_maintenance"
+   exit 0
+elif [ "${MYCMD}" == "--eomaint" ] ; then
+   remove_lock gpfs_maintenance
+   echo "GPFS Maintenance Lock Removed: /var/run/gpfs_maintenance"
+   exit 0
+fi
+
+if is_lock_set gpfs_maintenance ; then
+   echo "ERROR: A Maintenance Lock Is In Place."
    exit 1
 fi
 
