@@ -108,7 +108,7 @@ function remove_lock {
 }
 
 function gen_lock_name {
-   MYSTR="$*"
+   MYCMD="$*"
    echo ${MYCMD} | md5sum | awk '{print($1)}'
 }
 
