@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-source gpfs_functions
+source /var/mmfs/etc/gpfs_functions
 
 if is_node_gpfs_manager ; then
    echo `hostname -s`" is the manager."  
