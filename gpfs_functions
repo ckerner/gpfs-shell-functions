@@ -38,7 +38,8 @@ function is_fs_mounted {
 #          1 - If the current host is not the GPFS manager node.                #
 #===============================================================================#
 function is_node_gpfs_manager {
-   HOSTNAME=`hostname -s`
+   #HOSTNAME=`hostname -s`
+   HOSTNAME=`/usr/lpp/mmfs/bin/mmgetstate -Y | grep -v HEAD | awk -F: '{print($7)}'`
    MANAGER=`/usr/lpp/mmfs/bin/mmlsmgr -c 2>/dev/null| awk '{print($5)}' | sed -e 's/(//g' -e 's/)//g'`
 
    RESULT=`echo ${MANAGER} | grep ${HOSTNAME} | wc -l`
@@ -109,6 +110,7 @@ function remove_lock {
 
 function gen_lock_name {
    MYCMD="$*"
-   echo ${MYCMD} | md5sum | awk '{print($1)}'
+   #echo ${MYCMD} | md5sum | awk '{print($1)}'
+   echo ${MYCMD} | sed -e 's/\//_/g' | awk '{print($1)}'
 }
 
