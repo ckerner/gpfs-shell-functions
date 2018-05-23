@@ -114,3 +114,20 @@ function gen_lock_name {
    echo ${MYCMD} | sed -e 's/\//_/g' | awk '{print($1)}'
 }
 
+function get_lock_count {
+   LOCKFILE=$1
+   COUNT=0
+   if [ -f /var/run/${LOCKFILE} ] ; then
+      COUNT=`wc -l /var/run/${LOCKFILE} | awk '{print($1)}'`
+   fi
+   echo ${COUNT}
+}
+
+function log_to_lockfile {
+   LOCKFILE=$1
+   shift
+   MYMSG="$*"
+
+   echo "${MYMSG}" >> /var/run/${LOCKFILE}
+}
+
