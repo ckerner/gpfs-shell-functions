@@ -82,7 +82,7 @@ if is_node_gpfs_manager ; then
    set_lock ${LOCK}
 
    #echo `date`"  Executing: ${MYCMD}"
-   ${MYCMD}
+   eval ${MYCMD}
    RC=$?
 
    remove_lock ${LOCK}
